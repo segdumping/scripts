@@ -32,7 +32,7 @@ imgname=$(expr "$imgurl" : '.*ZH-CN\(.*\)&rf')
 imgpath=${rootpath}$imgname
 #不存在则先下载
 if [[ ! -s $imgpath ]]; then
-        $curl -o $imgpath $imgurl
+        $curl -o $imgpath $imgurl 2>>$errpath
 fi
 #调用Finder应用切换桌面壁纸
 osascript -e "tell application \"Finder\" to set the desktop picture to POSIX file \"$imgpath\""
