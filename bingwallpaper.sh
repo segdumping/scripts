@@ -6,8 +6,9 @@ rootpath="/Users/$USER/Pictures/"
 #结果存入文件
 jsonpath=${rootpath}wallpaper.json
 #数据信息不存在直接下载
-if [[ ! -e $jsonpath ]];then
-        curl $url > $jsonpath 2>>${rootpath}err.log
+curl="curl --retry 3"
+if [[ ! -s $jsonpath ]];then
+        $curl $url > $jsonpath 2>>${rootpath}err.log
 fi
 #最近的壁纸日期
 lastestdate=$(cat $jsonpath | /usr/local/bin/jq -r ".images[0].enddate")
@@ -15,7 +16,7 @@ lastestdate=$(cat $jsonpath | /usr/local/bin/jq -r ".images[0].enddate")
 today=$(date +%Y%m%d)
 #下载最新的信息
 if [[ $lastestdate -lt $today ]];then
-        curl $url > $jsonpath 2>>${rootpath}err.log
+        $curl $url > $jsonpath 2>>${rootpath}err.log
 fi
 #随机数
 random=$(expr $RANDOM % 8)
@@ -30,7 +31,7 @@ imgname=$(expr "$imgurl" : '.*ZH-CN\(.*\)&rf')
 imgpath=${rootpath}$imgname
 #不存在则先下载
 if [[ ! -e $imgpath ]]; then
-        curl -o $imgpath $imgurl
+        $curl -o $imgpath $imgurl
 fi
 #调用Finder应用切换桌面壁纸
 osascript -e "tell application \"Finder\" to set the desktop picture to POSIX file \"$imgpath\""
